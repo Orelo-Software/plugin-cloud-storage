@@ -9,13 +9,17 @@ interface Args {
 }
 
 export const getHandleUpload = ({ getStorageClient }: Args): HandleUpload => {
-  return async ({ file }) => {
-    const path = `/tmp/imageUpload-${file.filename}`
-    fs.writeFileSync(path, file.buffer)
-    const stream = fs.createReadStream(path)
+  return async ({ file, req }) => {
+    try {
+      const path = `/tmp/imageUpload-${file.filename}`
+      fs.writeFileSync(path, file.buffer)
+      const stream = fs.createReadStream(path)
 
-    await getStorageClient().pinFileToIPFS(stream, {
-      pinataMetadata: { name: file.filename },
-    })
+      await getStorageClient().pinFileToIPFS(stream, {
+        pinataMetadata: { name: file.filename },
+      })
+    } catch (err: unknown) {
+      req.payload.logger.error(err)
+    }
   }
 }

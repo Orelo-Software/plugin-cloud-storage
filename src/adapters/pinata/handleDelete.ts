@@ -6,7 +6,7 @@ interface Args {
 }
 
 export const getHandleDelete = ({ getStorageClient }: Args): HandleDelete => {
-  return async ({ filename }) => {
+  return async ({ filename, req }) => {
     try {
       const object = await getStorageClient().pinList({
         metadata: {
@@ -18,8 +18,8 @@ export const getHandleDelete = ({ getStorageClient }: Args): HandleDelete => {
       if (object.rows.length > 0) {
         await getStorageClient().unpin(object.rows[0].ipfs_pin_hash)
       }
-    } catch (e: unknown) {
-      console.error(`Error while unpinning in Pinata: ${e}`)
+    } catch (err: unknown) {
+      req.payload.logger.error(err)
     }
   }
 }
