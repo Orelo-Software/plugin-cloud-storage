@@ -1,15 +1,38 @@
-import type { CollectionConfig } from 'payload/types'
+import type { PinataClient } from '@pinata/sdk'
+import { Readable } from 'stream'
 import type { StaticHandler } from '../../types'
-import { getFilePrefix } from '../../utilities/getFilePrefix'
 
 interface Args {
-  collection: CollectionConfig
+  getStorageClient: () => PinataClient
 }
 
-export const getHandler = ({ collection }: Args): StaticHandler => {
+export const getHandler = ({ getStorageClient }: Args): StaticHandler => {
   return async (req, res, next) => {
     try {
-      const prefix = await getFilePrefix({ req, collection })
+      const object = await getStorageClient().pinList({
+        metadata: {
+          name: req.params.filename,
+          keyvalues: {},
+        },
+      })
+
+      if (object.rows.length > 0) {
+        const pinData = await fetch(
+          `https://gateway.pinata.cloud/ipfs/${object.rows[0].ipfs_pin_hash}`,
+        )
+
+        res.set({
+          'Content-Length': pinData.headers.get('content-type'),
+          'Content-Type': pinData.headers.get('content-length'),
+          ETag: pinData.headers.get('etag'),
+        })
+
+        const arrBuffer = await pinData.arrayBuffer()
+        const buffer = Buffer.from(arrBuffer)
+        const stream = Readable.from(buffer)
+
+        return stream.pipe(res)
+      }
 
       return next()
     } catch (err: unknown) {

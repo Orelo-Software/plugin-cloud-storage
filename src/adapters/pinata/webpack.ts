@@ -6,6 +6,11 @@ export const extendWebpackConfig = (existingWebpackConfig: WebpackConfig): Webpa
     ...existingWebpackConfig,
     resolve: {
       ...(existingWebpackConfig.resolve || {}),
+      fallback: {
+        ...existingWebpackConfig.resolve?.fallback,
+        fs: false,
+        stream: false,
+      },
       alias: {
         ...(existingWebpackConfig.resolve?.alias ? existingWebpackConfig.resolve.alias : {}),
         '@pinata/sdk': path.resolve(__dirname, './mock.js'),

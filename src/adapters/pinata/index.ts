@@ -2,7 +2,7 @@ import pinataClient from '@pinata/sdk'
 import type { PinataClient } from '@pinata/sdk'
 import type { Adapter, GeneratedAdapter } from '../../types'
 // import { getGenerateURL } from './generateURL'
-// import { getHandler } from './staticHandler'
+import { getHandler } from './staticHandler'
 // import { getHandleDelete } from './handleDelete'
 import { getHandleUpload } from './handleUpload'
 import { extendWebpackConfig } from './webpack'
@@ -29,7 +29,7 @@ export const pinataAdapter =
         console.log('Generate url')
         return 'generated url here'
       },
-      staticHandler: () => console.log('static handler here'),
+      staticHandler: getHandler({ getStorageClient }),
       webpack: extendWebpackConfig,
     }
   }
