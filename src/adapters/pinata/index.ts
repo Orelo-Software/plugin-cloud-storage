@@ -3,7 +3,7 @@ import type { PinataClient } from '@pinata/sdk'
 import type { Adapter, GeneratedAdapter } from '../../types'
 // import { getGenerateURL } from './generateURL'
 import { getHandler } from './staticHandler'
-// import { getHandleDelete } from './handleDelete'
+import { getHandleDelete } from './handleDelete'
 import { getHandleUpload } from './handleUpload'
 import { extendWebpackConfig } from './webpack'
 
@@ -24,7 +24,7 @@ export const pinataAdapter =
 
     return {
       handleUpload: getHandleUpload({ getStorageClient, collection }),
-      handleDelete: () => console.log('handle delete'),
+      handleDelete: getHandleDelete({ getStorageClient }),
       generateURL: () => {
         console.log('Generate url')
         return 'generated url here'
