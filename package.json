@@ -1,5 +1,5 @@
 {
-  "name": "@payloadcms/plugin-cloud-storage-test",
+  "name": "@payloadcms/plugin-cloud-storage",
   "description": "The official cloud storage plugin for Payload CMS",
   "version": "1.0.12",
   "main": "dist/index.js",
